@@ -8,8 +8,25 @@ from datetime import datetime
 # Ignore warnings
 warnings.filterwarnings("ignore", message=".*ScriptRunContext.*")
 
-# Load the dataset
-df = pd.read_csv(r'updated_flight_dataset.csv')
+# Google Drive link for dataset
+DATASET_URL = "https://drive.google.com/uc?id=1jBlIQUBYTYJFsfcHN8zaWqxhcOy20b_Q"
+DATASET_PATH = "updated_flight_dataset.csv"
+
+# Download dataset if not found
+if not os.path.exists(DATASET_PATH):
+    print("📥 Downloading dataset from Google Drive...")
+    gdown.download(DATASET_URL, DATASET_PATH, quiet=False)
+
+# Ensure the file is not empty
+if os.path.getsize(DATASET_PATH) == 0:
+    raise ValueError("❌ Error: The dataset file is empty!")
+
+# Read dataset
+df = pd.read_csv(DATASET_PATH)
+print("✅ Dataset loaded successfully!")
+
+# Display first few rows to verify
+print(df.head())
 
 # Ensure 'flight_date' is in datetime format
 df['Flight Date'] = pd.to_datetime(df['Flight Date'], errors='coerce')
