@@ -573,7 +573,7 @@ st.markdown(
     """
     ### ✨ The Predictors Team  
     **🚀 Team Lead:** Suhani  
-    **👨‍💻 Team Members:** Faroof | Kedar | Nissi  
+    **👨‍💻 Team Members:** Farooq | Kedar | Nissi  
     💡 *Passionate about AI, Machine Learning, and Predictive Analytics!*  
 
     ### 📬 Get in Touch  
