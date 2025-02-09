@@ -450,36 +450,22 @@ st.markdown("---")
 import streamlit as st
 import pandas as pd
 import joblib
-import gdown
-import os
 import time
 
-# Google Drive direct download links
-model_url = "https://drive.google.com/uc?export=download&id=10oMpGDmG6iEYOCmlLg6gHIXVP8-6xdvt"
-encoder_url = "https://drive.google.com/uc?export=download&id=1Zy6Tvi6g9DbHWhosWgMKYuSfg5hBKYJy"
+# Model & Feature Paths
+MODEL_PATH = "flight_price_rf_model.pkl"
+FEATURE_PATH = "feature_columns.pkl"
 
-# Define local file paths
-model_path = "flight_price_model.pkl"
-encoder_path = "label_encoders.pkl"
-
-# Function to download files if they are missing
-def download_file(url, output_path):
-    if not os.path.exists(output_path):
-        st.write(f"📥 Downloading {output_path} from Google Drive...")
-        gdown.download(url, output_path, quiet=False)
-
-# Download the model and encoders if needed
-download_file(model_url, model_path)
-download_file(encoder_url, encoder_path)
-
-# Load the model and encoders
-model = joblib.load(model_path)
-label_encoders = joblib.load(encoder_path)
-
-st.success("✅ Model and encoders loaded successfully!")
+# Load the model and feature names
+try:
+    model = joblib.load(MODEL_PATH)
+    feature_columns = joblib.load(FEATURE_PATH)
+    st.success("✅ Model loaded successfully!")
+except Exception as e:
+    st.error(f"❌ Error loading model or feature columns: {e}")
 
 # Streamlit App Title
-st.title("✈️ PRICE PREDICTOR")
+st.title("✈️ Flight Price Predictor")
 st.markdown("### Predict the price of your flight based on various factors.")
 st.divider()
 
@@ -488,10 +474,10 @@ col1, col2 = st.columns(2)
 
 # User Inputs - First Column
 with col1:
-    airline = st.selectbox("✈️ SELECT AIRLINE", label_encoders["Airline"].classes_)
-    flight_class = st.selectbox("🎫 SELECT CLASS", label_encoders["Class"].classes_)
-    origin = st.selectbox("📍 SELECT ORIGIN", label_encoders["Origin"].classes_)
-    destination = st.selectbox("📍 SELECT DESTINATION", label_encoders["Destination"].classes_)
+    airline = st.selectbox("✈️ SELECT AIRLINE", ['AirAsia', 'GO FIRST', 'Indigo', 'SpiceJet', 'StarAir', 'Trujet', 'Vistara'])
+    flight_class = st.selectbox("🎫 SELECT CLASS", ['economy'])
+    origin = st.selectbox("📍 SELECT ORIGIN", ['Chennai', 'Delhi', 'Hyderabad', 'Kolkata', 'Mumbai'])
+    destination = st.selectbox("📍 SELECT DESTINATION", ['Chennai', 'Delhi', 'Hyderabad', 'Kolkata', 'Mumbai'])
 
 # User Inputs - Second Column
 with col2:
@@ -499,35 +485,43 @@ with col2:
     date = st.number_input("📆 SELECT DATE", min_value=1, max_value=31, step=1)
     month = st.number_input("📅 SELECT MONTH", min_value=1, max_value=12, step=1)
     year = st.number_input("📆 SELECT YEAR", min_value=2023, max_value=2030, step=1)
-    duration = st.number_input("⏳ SELECT DURATION (Minutes)", min_value=0, step=1)
+    duration = st.number_input("⏳ SELECT DURATION (Minutes)", min_value=30, max_value=1500, step=1)
 
-# Function to encode categorical inputs
-def encode_label(encoder, value):
-    if value in encoder.classes_:
-        return encoder.transform([value])[0]
-    else:
-        return 0  # Assign default value for unseen labels
+# Function to preprocess user input for model prediction
+def preprocess_input(airline, flight_class, origin, destination, stops, date, month, year, duration):
+    # Create a dictionary for input features
+    input_data = {
+        "Number of Stops": stops,
+        "Date": date,
+        "Month": month,
+        "Year": year,
+        "Duration (Minutes)": duration
+    }
 
-# Convert inputs to DataFrame
-input_data = pd.DataFrame({
-    "Airline": [encode_label(label_encoders["Airline"], airline)],
-    "Class": [encode_label(label_encoders["Class"], flight_class)],
-    "Origin": [encode_label(label_encoders["Origin"], origin)],
-    "Destination": [encode_label(label_encoders["Destination"], destination)],
-    "Number of Stops": [stops],
-    "Date": [date],
-    "Month": [month],
-    "Year": [year],
-    "Duration (Minutes)": [duration]
-})
+    # One-hot encoding for categorical features (ensure alignment with training features)
+    for col in feature_columns:
+        if col.startswith("Airline_"):
+            input_data[col] = 1 if f"Airline_{airline}" == col else 0
+        elif col.startswith("Class_"):
+            input_data[col] = 1 if f"Class_{flight_class}" == col else 0
+        elif col.startswith("Origin_"):
+            input_data[col] = 1 if f"Origin_{origin}" == col else 0
+        elif col.startswith("Destination_"):
+            input_data[col] = 1 if f"Destination_{destination}" == col else 0
+        else:
+            input_data[col] = 0  # Default value for missing columns
 
-import time
+    return pd.DataFrame([input_data])
+
 st.divider()
 
 # Button Click for Prediction
 if st.button("💰 Predict Price", use_container_width=True):
+    # Preprocess input
+    input_df = preprocess_input(airline, flight_class, origin, destination, stops, date, month, year, duration)
+    
     # Make Prediction
-    predicted_price = model.predict(input_data)[0]
+    predicted_price = model.predict(input_df)[0]
 
     # Progress Bar Effect
     progress_bar = st.progress(0)
