@@ -499,7 +499,7 @@ col1, col2 = st.columns(2)
 # User Inputs - First Column
 with col1:
     airline = st.selectbox("✈️ SELECT AIRLINE", ['AirAsia', 'GO FIRST', 'Indigo', 'SpiceJet', 'StarAir', 'Trujet', 'Vistara'])
-    flight_class = st.selectbox("🎫 SELECT CLASS", ['economy'])
+    flight_class = st.selectbox("🎫 SELECT CLASS", ['economy'], ['business'])
     origin = st.selectbox("📍 SELECT ORIGIN", ['Chennai', 'Delhi', 'Hyderabad', 'Kolkata', 'Mumbai'])
     destination = st.selectbox("📍 SELECT DESTINATION", ['Chennai', 'Delhi', 'Hyderabad', 'Kolkata', 'Mumbai'])
 
