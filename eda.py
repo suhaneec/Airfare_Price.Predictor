@@ -558,5 +558,29 @@ if st.button("💰 Predict Price", use_container_width=True):
     st.balloons()
     st.toast("🚀 Prediction Completed!", icon="✅")
 
+import streamlit as st
+
+# Add a divider
+st.markdown("---")
+
+# Create a visually appealing footer
+st.markdown("<h2 style='text-align: center;'>✨ The Predictors Team ✨</h2>", unsafe_allow_html=True)
+
+st.markdown("""
+    <div style="text-align: center;">
+        <h3>🚀 Team Lead: <b>Suhani</b></h3>
+        <h4>👨‍💻 Team Members: <b>Faroof | Kedar | Nissi</b></h4>
+        <p>💡 Passionate about AI, Machine Learning, and Predictive Analytics!</p>
+        <br>
+        <h3>📬 Get in Touch</h3>
+        <p>📧 <b>Email:</b> suhanichauhan58@gmail.com</p>
+        <p>🔗 <b>GitHub:</b> <a href="https://github.com/suhaneec/Airfare_Price.Predictor" target="_blank">Project Repository</a></p>
+        <p>🌐 <b>Web App:</b> <a href="https://airfare-price-predictor.streamlit.app/" target="_blank">Live Demo</a></p>
+        <br>
+        <p>🚀 Thank you for using the <b>Airfare Price Predictor</b>! Your feedback helps us improve. ✨</p>
+    </div>
+""", unsafe_allow_html=True)
+
+
 
 
