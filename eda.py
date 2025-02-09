@@ -4,6 +4,7 @@ import streamlit as st
 from PIL import Image
 import warnings
 from datetime import datetime
+import os
 
 # Ignore warnings
 warnings.filterwarnings("ignore", message=".*ScriptRunContext.*")
