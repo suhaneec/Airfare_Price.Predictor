@@ -359,48 +359,38 @@ st.markdown("---")
 import plotly.figure_factory as ff
 
 st.subheader("📊 **AIRLINE PRICES ACROSS ROUTES**")
-# Handle missing values before sorting
-origin_options = ['Select All'] + sorted(df['Origin'].dropna().unique().tolist())
-selected_origin = st.multiselect("✈️ **Select Origin:**", options=origin_options, default=['Select All'])
-if 'Select All' in selected_origin:
-    selected_origin = df['Origin'].dropna().unique().tolist()
 
-destination_options = ['Select All'] + sorted(df['Destination'].dropna().unique().tolist())
-selected_destination = st.multiselect("🌍 **Select Destination:**", options=destination_options, default=['Select All'])
-if 'Select All' in selected_destination:
-    selected_destination = df['Destination'].dropna().unique().tolist()
+# Create a pivot table of average ticket prices for each Origin-Destination combination
+pivot_table = df.pivot_table(index="Origin", columns="Destination", values="Price (₹)", aggfunc="mean")
 
-# Create a pivot table of average ticket prices for each Origin-Destination-Airline combination
-pivot_table = filtered_df.pivot_table(index="Origin", columns="Destination", values="Price (₹)", aggfunc="mean")
-
-# Check if the pivot table is empty (no flights available for selected filters)
+# Check if the pivot table is empty
 if pivot_table.empty:
-    st.warning("No data available for the selected filters. Please try different filter options.")
+    st.warning("No data available.")
 else:
-    # Create a heatmap visualization
+    # Create heatmap visualization
     fig = ff.create_annotated_heatmap(
-        z=pivot_table.fillna(0).values,  # Fill NaN with 0 to avoid errors
-        x=pivot_table.columns.tolist(),  # Destination cities
-        y=pivot_table.index.tolist(),    # Origin cities
-        annotation_text=pivot_table.round(0).fillna(0).astype(str).values,  # Show price values
-        colorscale="Blues",  # Blue color theme to match dashboard
+        z=pivot_table.fillna(0).values,  
+        x=pivot_table.columns.tolist(),  
+        y=pivot_table.index.tolist(),    
+        annotation_text=pivot_table.round(0).fillna(0).astype(str).values,  
+        colorscale="Blues",  
         showscale=True
     )
 
     # Customize layout
     fig.update_layout(
-        title="AVERAGE TICKET PRICES B/W ORIGING & DESTINATION",
+        title="AVERAGE TICKET PRICES B/W ORIGIN & DESTINATION",
         xaxis_title="DESTINATION",
         yaxis_title="ORIGIN",
         font=dict(color="white"),
-        plot_bgcolor="#121212",  # Dark background
+        plot_bgcolor="#121212",
         paper_bgcolor="#121212"
     )
 
-    # Display the heatmap
+    # Display heatmap
     st.plotly_chart(fig)
 
-    st.markdown("**\U0001F4DD INSIGHT:  This heatmap helps identify price variations across different airlines and routes, making it easier to choose budget-friendly travel options.**")
+    st.markdown("**📜 INSIGHT: This heatmap helps identify price variations across different routes, making it easier to choose budget-friendly travel options.**")
 
 st.markdown("---")
 
