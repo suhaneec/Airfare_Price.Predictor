@@ -557,17 +557,9 @@ if st.button("💰 Predict Price", use_container_width=True):
     st.success(f"🎯 Predicted Flight Price: ₹{predicted_price:.2f}")  # Re-confirm price
     st.balloons()
     st.toast("🚀 Prediction Completed!", icon="✅")
-
 import streamlit as st
-
 # Add a divider
 st.markdown("---")
-
-import streamlit as st
-
-# Add a divider
-st.markdown("---")
-
 # Left-aligned, small text style
 st.markdown(
     """
