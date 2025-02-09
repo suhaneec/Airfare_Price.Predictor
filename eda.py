@@ -450,17 +450,33 @@ st.markdown("---")
 import streamlit as st
 import pandas as pd
 import joblib
+import os
+import gdown  # Install using: pip install gdown
 import time
 
-# Model & Feature Paths
-MODEL_PATH = "flight_price_rf_model.pkl"
-FEATURE_PATH = "feature_columns.pkl"
+# Google Drive Links for Model and Feature Columns
+MODEL_URL = "https://drive.google.com/uc?id=1oNac4uYGsMz0beRvRT5GFvNBXwNRhC6r"
+FEATURES_URL = "https://drive.google.com/uc?id=1MFqlLzUFgGlJjGLqRPeG0kwQoNViwIml"
 
-# Load the model and feature names
+MODEL_PATH = "flight_price_rf_model.pkl"
+FEATURES_PATH = "feature_columns.pkl"
+
+# Function to download files if they don't exist
+def download_file(url, output):
+    if not os.path.exists(output):
+        st.info(f"📥 Downloading {output}...")
+        gdown.download(url, output, quiet=False)
+        st.success(f"✅ {output} downloaded successfully!")
+
+# Download the model and feature files if they don't exist
+download_file(MODEL_URL, MODEL_PATH)
+download_file(FEATURES_URL, FEATURES_PATH)
+
+# Load the model and feature columns
 try:
     model = joblib.load(MODEL_PATH)
-    feature_columns = joblib.load(FEATURE_PATH)
-    st.success("✅ Model loaded successfully!")
+    feature_columns = joblib.load(FEATURES_PATH)
+    st.success("✅ Model and features loaded successfully!")
 except Exception as e:
     st.error(f"❌ Error loading model or feature columns: {e}")
 
@@ -533,5 +549,6 @@ if st.button("💰 Predict Price", use_container_width=True):
     st.success(f"🎯 Predicted Flight Price: ₹{predicted_price:.2f}")  # Re-confirm price
     st.balloons()
     st.toast("🚀 Prediction Completed!", icon="✅")
+
 
 
