@@ -92,7 +92,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 ## 👨‍💻 Contributors
 - **👩‍💻 Suhani** - EDA, Designing, Deployment, Model Training
-- **🧑‍💻 Ganagavaram** - Model Training
+- **🧑‍💻 Farooq** - Model Training
 - **🧑‍💻 Kedar** - Model Training
 - **👩‍💻 Nissi** - EDA
 
